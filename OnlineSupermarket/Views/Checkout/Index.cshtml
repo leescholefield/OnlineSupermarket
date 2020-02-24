@@ -1,0 +1,37 @@
+﻿@model CheckoutViewModel
+@{ 
+    ViewData["Title"] = "Checkout";
+}
+
+<table style="width:100%" id="product-checkout-table">
+    <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Quantity</th>
+    </tr>
+
+    @foreach (KeyValuePair<Product, int> p in Model.ProductDictionary)
+    {
+    <tr>
+        <td>
+            <img class="checkout-image" src="~/images/@p.Key.ImageName" alt="Product image" />
+            @Html.DisplayFor(product => p.Key.Name)
+        </td>
+        <td class="product-price">@Html.DisplayFor(product => p.Key.Price)</td>
+        <td>
+            <form class="quantity-form" asp-controller="Checkout" asp-action="ChangeQuantity" asp-route-id="@p.Key.ID" method="post">
+                <input class="quantity-input" name="quantity" type="number" value="@p.Value" min="1" />
+            </form>
+        </td>
+        <td>
+            <form class="remove-form" asp-controller="Checkout" asp-action="RemoveItem" asp-route-id="@p.Key.ID" method="post">
+                <input type="submit" value="X" />
+            </form>
+        </td>
+    </tr>
+    }
+</table>
+
+<p>Subtotal: <span id="subtotal-value">@Html.DisplayFor(price => Model.Total)</span></p>
+
+@Html.ActionLink("Buy", "Checkout", "Checkout")

@@ -1,0 +1,95 @@
+﻿@model OnlineSupermarket.Models.ProductCategoryViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form asp-controller="Products" asp-action="Index" method="get">
+    <p>
+        <select asp-for="ProductCategory" asp-items="Model.Categories">
+            <option value="">All</option>
+        </select>
+
+        Name: <input type="text" asp-for="SearchString">
+        <select  asp-for="SortBy" asp-items="Model.Sorting">
+            
+            </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+@if (Model.Products.Count() > 0)
+{
+    @foreach (var item in Model.Products)
+    {
+
+        <article class="product">
+            <form asp-controller="Products" asp-action="Details" asp-route-id="@item.ID">
+                <input type="image" class="product-image" src="~/images/@item.ImageName" alt="Product image" />
+            </form>
+
+            <p class="product-name">@Html.DisplayFor(modelItem => item.Name)</p>
+
+            @if (!item.InBasket)
+            {
+            <form class="basket-form" asp-controller="Products" asp-action="AddToBasket" asp-route-id="@item.ID">
+                <input type="submit" value="Add to basket" />
+            </form>
+            }
+            else
+            {
+                <p>In basket</p>
+            }
+
+            <p>@Html.DisplayFor(modelItem => item.Price)</p>
+
+            @if (item.Rating == 0)
+            {
+                <p>No ratings </p>
+            }
+            else
+            {
+                <p class="product-rating">
+                    @for (int i = 0; i < item.Rating; i++)
+                    {
+                        <span>★</span>
+                    }
+                </p>
+
+            }
+
+        </article>
+    }
+
+}
+else
+{
+    <p>Sorry. No results could be found</p>
+}
+<div id="page-nav">
+    @if (Model.CurrentPage != 0)
+    {
+        @Html.ActionLink("Previous page", "Index", "Products",
+                            new
+                            {
+                                productCategory = Model.ProductCategory,
+                                searchString = Model.SearchString,
+                                page = Model.CurrentPage - 1,
+                                NumResults = Model.NumberOfResults,
+                                sorting = Model.SortBy
+                            })
+    }
+    @if (!(Model.Products.Count() < Model.NumberOfResults))
+    {
+    @Html.ActionLink("Next page", "Index", "Products",
+                            new
+                            {
+                                productCategory = Model.ProductCategory,
+                                searchString = Model.SearchString,
+                                page = Model.CurrentPage + 1,
+                                NumResults = Model.NumberOfResults,
+                                sorting = Model.SortBy
+                            })
+    }
+</div>

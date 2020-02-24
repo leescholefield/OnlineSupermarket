@@ -1,0 +1,48 @@
+﻿@model PromotionViewModel
+
+@{
+    ViewData["Title"] = "Promotion";
+}
+
+<h1>@Model.Promotion.Name</h1>
+
+@foreach (var item in Model.Promotion.Items)
+{
+    <article class="product">
+        <form asp-controller="Products" asp-action="Details" asp-route-id="@item.ID">
+            <input type="image" class="product-image" src="~/images/@item.ImageName" alt="Product image" />
+        </form>
+
+        <p class="product-name">@Html.DisplayFor(modelItem => item.Name)</p>
+
+        @if (!item.InBasket)
+        {
+            <form class="basket-form" asp-controller="Products" asp-action="AddToBasket" asp-route-id="@item.ID">
+                <input type="submit" value="Add to basket" />
+            </form>
+        }
+        else
+        {
+            <p>In basket</p>
+        }
+
+        <p>@Html.DisplayFor(modelItem => item.Price)</p>
+
+        @if (item.Rating == 0)
+        {
+            <p>No ratings </p>
+        }
+        else
+        {
+            <p class="product-rating">
+                @for (int i = 0; i < item.Rating; i++)
+                {
+                    <span>★</span>
+                }
+            </p>
+
+        }
+
+    </article>
+}
+
